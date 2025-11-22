@@ -4,17 +4,35 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Building, ArrowLeft } from "lucide-react";
-import { Link } from "react-router-dom";
-import petrolubelogo from "@/assets/petrolube-logo.png";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "@/lib/auth";
+import { useToast } from "@/hooks/use-toast";
 
 const DepartmentLogin = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const { signIn } = useAuth();
+  const navigate = useNavigate();
+  const { toast } = useToast();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: Implement authentication
-    console.log("Department login:", { email, password });
+    setLoading(true);
+    
+    const { error } = await signIn(email, password);
+    
+    if (error) {
+      toast({
+        title: "Login Failed",
+        description: error.message,
+        variant: "destructive",
+      });
+    } else {
+      navigate("/department-dashboard");
+    }
+    
+    setLoading(false);
   };
 
   return (
@@ -59,8 +77,8 @@ const DepartmentLogin = () => {
                 required
               />
             </div>
-            <Button type="submit" variant="hero" className="w-full">
-              Login
+            <Button type="submit" variant="hero" className="w-full" disabled={loading}>
+              {loading ? "Logging in..." : "Login"}
             </Button>
           </form>
         </CardContent>
