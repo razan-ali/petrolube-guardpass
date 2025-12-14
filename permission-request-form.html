@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Request Visitor Permission - Petrolube</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: #f8f9fa;
+            color: #1a1a1a;
+            line-height: 1.6;
+        }
+
+        /* Header */
+        header {
+            background-color: #ffffff;
+            border-bottom: 1px solid #e5e7eb;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            backdrop-filter: blur(10px);
+            background-color: rgba(255, 255, 255, 0.95);
+        }
+
+        .header-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .back-button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.2s;
+        }
+
+        .back-button:hover {
+            background-color: #f3f4f6;
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .logo {
+            width: 40px;
+            height: 40px;
+            object-fit: contain;
+        }
+
+        h1 {
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+
+        /* Container */
+        .container {
+            max-width: 1024px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
+
+        /* Card */
+        .card {
+            background: #ffffff;
+            border-radius: 8px;
+            border: 1px solid #e5e7eb;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .card-description {
+            font-size: 0.875rem;
+            color: #6b7280;
+        }
+
+        .card-content {
+            padding: 1.5rem;
+        }
+
+        /* Form Elements */
+        .space-y-4 > * + * {
+            margin-top: 1rem;
+        }
+
+        .space-y-2 > * + * {
+            margin-top: 0.5rem;
+        }
+
+        .grid {
+            display: grid;
+            gap: 1rem;
+        }
+
+        @media (min-width: 768px) {
+            .grid-cols-2 {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #374151;
+            margin-bottom: 0.5rem;
+        }
+
+        input[type="text"],
+        input[type="file"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 0.625rem 0.75rem;
+            font-size: 0.875rem;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            background-color: #ffffff;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        input[type="text"]:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        input[type="file"] {
+            padding: 0.5rem 0.75rem;
+        }
+
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+            font-family: inherit;
+        }
+
+        select {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 0.5rem center;
+            background-size: 1.25rem;
+            padding-right: 2.5rem;
+            cursor: pointer;
+        }
+
+        /* Upload Container */
+        .upload-container {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .upload-icon {
+            width: 1.25rem;
+            height: 1.25rem;
+            color: #9ca3af;
+        }
+
+        /* Hidden Sections */
+        .hidden {
+            display: none;
+        }
+
+        /* Truck/Car Details */
+        .vehicle-details {
+            padding-left: 1rem;
+            border-left: 4px solid #3b82f6;
+            margin-top: 1rem;
+        }
+
+        .car-details {
+            border-left-color: #8b5cf6;
+        }
+
+        .vehicle-details h4 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .vehicle-details h5 {
+            font-size: 0.875rem;
+            font-weight: 500;
+            margin-top: 1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .help-text {
+            font-size: 0.75rem;
+            color: #6b7280;
+            margin-top: 0.25rem;
+        }
+
+        /* Buttons */
+        .button-container {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        button {
+            padding: 0.625rem 1.25rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 1px solid transparent;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-outline {
+            background: #ffffff;
+            border-color: #d1d5db;
+            color: #374151;
+        }
+
+        .btn-outline:hover {
+            background-color: #f9fafb;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            color: #ffffff;
+            border: none;
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+        }
+
+        .icon {
+            width: 1rem;
+            height: 1rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .card-content,
+            .card-header {
+                padding: 1rem;
+            }
+
+            h1 {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="header-container">
+            <button type="button" class="back-button" onclick="window.history.back()">
+                <svg class="icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="19" y1="12" x2="5" y2="12"></line>
+                    <polyline points="12 19 5 12 12 5"></polyline>
+                </svg>
+            </button>
+            <div class="header-content">
+                <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' fill='%233b82f6'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='Arial' font-size='20' fill='white' font-weight='bold'%3EP%3C/text%3E%3C/svg%3E" alt="Petrolube" class="logo">
+                <h1>Request Visitor Permission</h1>
+            </div>
+        </div>
+    </header>
+
+    <!-- Form -->
+    <div class="container">
+        <form id="permissionForm" onsubmit="handleSubmit(event)">
+            <!-- Visitor Information -->
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Visitor Information</h2>
+                    <p class="card-description">All fields are mandatory</p>
+                </div>
+                <div class="card-content space-y-4">
+                    <div class="grid grid-cols-2">
+                        <div class="space-y-2">
+                            <label for="fullName">Full Name *</label>
+                            <input type="text" id="fullName" name="fullName" required placeholder="Enter full name">
+                        </div>
+                        <div class="space-y-2">
+                            <label for="idNumber">ID / Iqama Number *</label>
+                            <input type="text" id="idNumber" name="idNumber" required placeholder="Enter ID or Iqama number">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2">
+                        <div class="space-y-2">
+                            <label for="nationality">Nationality *</label>
+                            <input type="text" id="nationality" name="nationality" required placeholder="Enter nationality">
+                        </div>
+                        <div class="space-y-2">
+                            <label for="company">Company / Organization Name *</label>
+                            <input type="text" id="company" name="company" required placeholder="Enter company name">
+                        </div>
+                    </div>
+
+                    <div class="space-y-2">
+                        <label for="department">Department to Visit *</label>
+                        <select id="department" name="department" required>
+                            <option value="">Select department</option>
+                            <option value="shipping">Shipping</option>
+                            <option value="raw-material">Raw Material</option>
+                            <option value="lab">Lab</option>
+                            <option value="coordinator">Coordinator</option>
+                            <option value="bulk-oil">Bulk Oil</option>
+                        </select>
+                    </div>
+
+                    <div class="space-y-2">
+                        <label for="purpose">Purpose of Visit *</label>
+                        <textarea id="purpose" name="purpose" required placeholder="Describe the purpose of your visit"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Document Uploads -->
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Document Uploads</h2>
+                </div>
+                <div class="card-content space-y-4">
+                    <div class="space-y-2">
+                        <label for="idUpload">Upload ID / Iqama *</label>
+                        <div class="upload-container">
+                            <input type="file" id="idUpload" name="idUpload" required accept="image/*,.pdf">
+                            <svg class="upload-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                <polyline points="17 8 12 3 7 8"></polyline>
+                                <line x1="12" y1="3" x2="12" y2="15"></line>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="space-y-2">
+                        <label for="licenseUpload">Upload Driver's License (Optional)</label>
+                        <div class="upload-container">
+                            <input type="file" id="licenseUpload" name="licenseUpload" accept="image/*,.pdf">
+                            <svg class="upload-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                <polyline points="17 8 12 3 7 8"></polyline>
+                                <line x1="12" y1="3" x2="12" y2="15"></line>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Vehicle Information -->
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Vehicle Information</h2>
+                </div>
+                <div class="card-content space-y-4">
+                    <div class="space-y-2">
+                        <label for="hasVehicle">Are you arriving with a vehicle? *</label>
+                        <select id="hasVehicle" name="hasVehicle" required onchange="toggleVehicleSection()">
+                            <option value="">Select option</option>
+                            <option value="no">No</option>
+                            <option value="yes">Yes</option>
+                        </select>
+                    </div>
+
+                    <div id="vehicleSection" class="hidden space-y-4">
+                        <div class="space-y-2">
+                            <label for="vehicleType">Vehicle Type *</label>
+                            <select id="vehicleType" name="vehicleType" onchange="toggleVehicleType()">
+                                <option value="">Select vehicle type</option>
+                                <option value="truck">Truck</option>
+                                <option value="car">Car</option>
+                            </select>
+                        </div>
+
+                        <!-- Truck Section -->
+                        <div id="truckSection" class="hidden vehicle-details">
+                            <h4>Truck Details</h4>
+
+                            <div class="space-y-2">
+                                <label for="truckPlateNumber">Plate Number *</label>
+                                <input type="text" id="truckPlateNumber" name="truckPlateNumber" placeholder="Enter plate number">
+                            </div>
+
+                            <div class="space-y-2">
+                                <label for="truckOperation">Truck Operation *</label>
+                                <select id="truckOperation" name="truckOperation">
+                                    <option value="">Select operation</option>
+                                    <option value="loading">Loading</option>
+                                    <option value="unloading">Unloading</option>
+                                    <option value="both">Both (Loading and Unloading)</option>
+                                </select>
+                            </div>
+
+                            <div class="space-y-4">
+                                <h5>Required Safety Documentation</h5>
+
+                                <div class="space-y-2">
+                                    <label for="driverPhoto">Photo of driver in safety attire *</label>
+                                    <input type="file" id="driverPhoto" name="driverPhoto" accept="image/*">
+                                </div>
+
+                                <div class="space-y-2">
+                                    <label for="truckPhoto">Photo of the truck *</label>
+                                    <input type="file" id="truckPhoto" name="truckPhoto" accept="image/*">
+                                </div>
+
+                                <div class="space-y-2">
+                                    <label for="safetyEquipment">Photo of safety equipment *</label>
+                                    <input type="file" id="safetyEquipment" name="safetyEquipment" accept="image/*">
+                                    <p class="help-text">Must show warning triangle, fire extinguisher, and first aid kit</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Car Section -->
+                        <div id="carSection" class="hidden vehicle-details car-details">
+                            <h4>Car Details</h4>
+
+                            <div class="space-y-2">
+                                <label for="carPlate">Plate Number *</label>
+                                <input type="text" id="carPlate" name="carPlate" placeholder="Enter plate number">
+                            </div>
+
+                            <div class="space-y-2">
+                                <label for="carRegistration">Upload Vehicle Registration *</label>
+                                <input type="file" id="carRegistration" name="carRegistration" accept="image/*,.pdf">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Submit Buttons -->
+            <div class="button-container">
+                <button type="button" class="btn-outline" onclick="window.history.back()">Cancel</button>
+                <button type="submit" class="btn-primary">
+                    <svg class="icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
+                    Submit Request
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        function toggleVehicleSection() {
+            const hasVehicle = document.getElementById('hasVehicle').value;
+            const vehicleSection = document.getElementById('vehicleSection');
+            const vehicleType = document.getElementById('vehicleType');
+
+            if (hasVehicle === 'yes') {
+                vehicleSection.classList.remove('hidden');
+                vehicleType.required = true;
+            } else {
+                vehicleSection.classList.add('hidden');
+                vehicleType.required = false;
+                vehicleType.value = '';
+                toggleVehicleType();
+            }
+        }
+
+        function toggleVehicleType() {
+            const vehicleType = document.getElementById('vehicleType').value;
+            const truckSection = document.getElementById('truckSection');
+            const carSection = document.getElementById('carSection');
+
+            // Hide both sections first
+            truckSection.classList.add('hidden');
+            carSection.classList.add('hidden');
+
+            // Reset required fields
+            document.getElementById('truckPlateNumber').required = false;
+            document.getElementById('truckOperation').required = false;
+            document.getElementById('driverPhoto').required = false;
+            document.getElementById('truckPhoto').required = false;
+            document.getElementById('safetyEquipment').required = false;
+            document.getElementById('carPlate').required = false;
+            document.getElementById('carRegistration').required = false;
+
+            if (vehicleType === 'truck') {
+                truckSection.classList.remove('hidden');
+                document.getElementById('truckPlateNumber').required = true;
+                document.getElementById('truckOperation').required = true;
+                document.getElementById('driverPhoto').required = true;
+                document.getElementById('truckPhoto').required = true;
+                document.getElementById('safetyEquipment').required = true;
+            } else if (vehicleType === 'car') {
+                carSection.classList.remove('hidden');
+                document.getElementById('carPlate').required = true;
+                document.getElementById('carRegistration').required = true;
+            }
+        }
+
+        function handleSubmit(event) {
+            event.preventDefault();
+            alert('Request Submitted!\n\nYour visitor permission request has been submitted successfully.');
+            // You can add actual form submission logic here
+            console.log('Form submitted');
+        }
+    </script>
+</body>
+</html>
